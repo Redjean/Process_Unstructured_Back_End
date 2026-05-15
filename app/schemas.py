@@ -2,6 +2,17 @@ from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 
 
+from typing import Optional
+from pydantic import BaseModel, EmailStr
+
+
+# =========================
+# Response genérico
+# =========================
+class MessageResponse(BaseModel):
+    message: str
+
+
 # =========================
 # 1. LOGIN
 # =========================
@@ -10,8 +21,8 @@ class LoginBase(BaseModel):
     password: str
 
 
-class LoginResponse(BaseModel):
-    status: str
+# Alias para response_model del endpoint /login
+LoginResponse = MessageResponse
 
 
 # =========================
@@ -31,17 +42,11 @@ class NormalizationOptions(BaseModel):
 
 class NormalizationRequest(BaseModel):
     text: str
-    options: Optional[NormalizationOptions] = Field(
-        default_factory=NormalizationOptions
-    )
+    options: Optional[NormalizationOptions] = None
 
 
-class NormalizationResponse(BaseModel):
-    normalized_text: str
-    detected_language: Optional[str] = None
-    segments: Optional[List[str]] = None
-    quality_score: Optional[float] = None
-    statistics: Optional[Dict[str, Any]] = None
+# Alias para response_model del endpoint /Normalization
+NormalizationResponse = MessageResponse
 
 
 # =========================
@@ -49,31 +54,31 @@ class NormalizationResponse(BaseModel):
 # =========================
 class AnonymizationRequest(BaseModel):
     text: str
-    ner_model: str = "electra"
     anonymization_technique: str = "masking"
 
 
-class AnonymizationMetadata(BaseModel):
-    entities_found: int
-    execution_time_ms: float
-    model_used: str
-    technique_used: str
-
-
-class AnonymizationResponse(BaseModel):
-    anonymized_text: str
-    metadata: AnonymizationMetadata
+# Alias para response_model del endpoint /Anonimization
+AnonymizationResponse = MessageResponse
 
 
 # =========================
 # 4. LOGS
 # =========================
-class LogSchema(BaseModel):
-    id: int
-    process_type: str
-    input_length: int
-    output_length: int
-    execution_time_ms: float
-    status: str
-    timestamp: str
-    details: Optional[Dict[str, Any]] = None
+# Si el endpoint /logs devuelve:
+# {"message": "Funcionalidad de logs en desarrollo"}
+# entonces también debe usar MessageResponse.
+LogSchema = MessageResponse
+
+
+# =========================
+# 5. REGISTER USER
+# =========================
+class RegisterUserRequest(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    full_name: Optional[str] = None
+
+
+# Alias para response_model del endpoint /register
+RegisterUserResponse = MessageResponse

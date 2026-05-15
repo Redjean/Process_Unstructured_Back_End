@@ -47,10 +47,7 @@ def root():
 # ==========================================================
 @app.post("/login", response_model=LoginResponse)
 def login(data: LoginBase):
-    if data.user == "admin" and data.password == "1234":
-        return {"status": "ok"}
-
-    return {"status": "combinación incorrecta"}
+    return {"message": "funcionalidad de login en desarrollo"}
 
 
 # ==========================================================
@@ -58,6 +55,7 @@ def login(data: LoginBase):
 # ==========================================================
 @app.post("/Normalization", response_model=NormalizationResponse)
 def normalize(data: NormalizationRequest):
+    return {"message": "funcionalidad de normalización en desarrollo"}
 
 
 
@@ -66,6 +64,9 @@ def normalize(data: NormalizationRequest):
 # ==========================================================
 @app.post("/Anonimization", response_model=AnonymizationResponse)
 def anonymize(data: AnonymizationRequest):
+    return {
+        "message": "Funcionalidad de anonimización en desarrollo"
+    }
 
 
 # ==========================================================
@@ -73,4 +74,12 @@ def anonymize(data: AnonymizationRequest):
 # ==========================================================
 @app.get("/logs", response_model=list[LogSchema])
 def get_logs():
-    return logs_db
+    return {
+        "message": "Funcionalidad de logs en desarrollo"
+    }
+
+@app.post("/register", response_model=RegisterUserResponse)
+def register_user(data: RegisterUserRequest):
+    return {
+        "message": "Endpoint en desarrollo"
+    }
