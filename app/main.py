@@ -1,33 +1,29 @@
 from fastapi import FastAPI
-from datetime import datetime
-import time
-import re
+
 from app.schemas import (
-    LoginBase,
+    InsertDataRequest,
+    InsertDataResponse,
+    NormalizeDataRequest,
+    NormalizeDataResponse,
+    AnonymizeDataRequest,
+    AnonymizeDataResponse,
+    RequestDataRequest,
+    RequestDataResponse,
+    CheckingLogsRequest,
+    CheckingLogsResponse,
+    LoginRequest,
     LoginResponse,
-    NormalizationRequest,
-    NormalizationResponse,
-    AnonymizationRequest,
-    AnonymizationResponse,
-    AnonymizationMetadata,
-    LogSchema,
+    SignInRequest,
+    SignInResponse,
+    ModifyAttributesRequest,
+    ModifyAttributesResponse,
 )
 
 app = FastAPI(
     title="Text Processing API",
-    version="1.0.0",
-    description="API para normalización, anonimización, logs y autenticación."
+    version="2.0.0",
+    description="API para ingesta, normalización, anonimización, solicitud de datos, auditoría y gestión de usuarios."
 )
-
-# Base de datos en memoria para ejemplo
-logs_db = []
-
-
-# ==========================================================
-# Función para guardar logs (persistencia simulada)
-# ==========================================================
-def guardar(log: LogSchema):
-    logs_db.append(log)
 
 
 # ==========================================================
@@ -43,43 +39,80 @@ def root():
 
 
 # ==========================================================
-# 1. LOGIN
+# 1. INSERT DATA (Data Owner)
+# ==========================================================
+@app.post("/insert_data", response_model=InsertDataResponse)
+def insert_data(data: InsertDataRequest):
+    return {
+        "message": "Endpoint en desarrollo"
+    }
+
+
+# ==========================================================
+# 2. NORMALIZE DATA (Data Controller)
+# ==========================================================
+@app.post("/normalize_data", response_model=NormalizeDataResponse)
+def normalize_data(data: NormalizeDataRequest):
+    return {
+        "message": "Endpoint en desarrollo"
+    }
+
+
+# ==========================================================
+# 3. ANONYMIZE DATA (Data Processor)
+# ==========================================================
+@app.post("/anonimize_data", response_model=AnonymizeDataResponse)
+def anonimize_data(data: AnonymizeDataRequest):
+    return {
+        "message": "Endpoint en desarrollo"
+    }
+
+
+# ==========================================================
+# 4. REQUEST DATA (External Party / Receiver)
+# ==========================================================
+@app.post("/request_data", response_model=RequestDataResponse)
+def request_data(data: RequestDataRequest):
+    return {
+        "message": "Endpoint en desarrollo"
+    }
+
+
+# ==========================================================
+# 5. CHECKING LOGS (Control Authority)
+# ==========================================================
+@app.post("/checking_logs", response_model=CheckingLogsResponse)
+def checking_logs(data: CheckingLogsRequest):
+    return {
+        "message": "Endpoint en desarrollo"
+    }
+
+
+# ==========================================================
+# 6. LOGIN
 # ==========================================================
 @app.post("/login", response_model=LoginResponse)
-def login(data: LoginBase):
-    return {"message": "funcionalidad de login en desarrollo"}
-
-
-# ==========================================================
-# 2. NORMALIZATION
-# ==========================================================
-@app.post("/Normalization", response_model=NormalizationResponse)
-def normalize(data: NormalizationRequest):
-    return {"message": "funcionalidad de normalización en desarrollo"}
-
-
-
-# ==========================================================
-# 3. ANONYMIZATION
-# ==========================================================
-@app.post("/Anonimization", response_model=AnonymizationResponse)
-def anonymize(data: AnonymizationRequest):
+def login(data: LoginRequest):
     return {
-        "message": "Funcionalidad de anonimización en desarrollo"
+        "message": "Endpoint en desarrollo"
     }
 
 
 # ==========================================================
-# 4. LOGS
+# 7. SIGN IN / REGISTER USER
 # ==========================================================
-@app.get("/logs", response_model=list[LogSchema])
-def get_logs():
+@app.post("/sign_in", response_model=SignInResponse)
+def sign_in(data: SignInRequest):
     return {
-        "message": "Funcionalidad de logs en desarrollo"
+        "message": "Endpoint en desarrollo"
     }
 
-@app.post("/register", response_model=RegisterUserResponse)
-def register_user(data: RegisterUserRequest):
+
+# ==========================================================
+# 8. MODIFY ATTRIBUTES (Admin)
+# ==========================================================
+@app.post("/modify_attributes", response_model=ModifyAttributesResponse)
+def modify_attributes(data: ModifyAttributesRequest):
     return {
         "message": "Endpoint en desarrollo"
     }

@@ -1,33 +1,30 @@
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
-
-
-from typing import Optional
+from typing import Optional, Literal
 from pydantic import BaseModel, EmailStr
 
 
-# =========================
-# Response genérico
-# =========================
+# ==========================================================
+# RESPUESTA GENÉRICA
+# ==========================================================
 class MessageResponse(BaseModel):
     message: str
 
 
-# =========================
-# 1. LOGIN
-# =========================
-class LoginBase(BaseModel):
-    user: str
-    password: str
+# ==========================================================
+# 1. INSERT DATA (Data Owner)
+# Endpoint: /insert_data
+# ==========================================================
+class InsertDataRequest(BaseModel):
+    text: str
+    consent_accepted: bool
 
 
-# Alias para response_model del endpoint /login
-LoginResponse = MessageResponse
+InsertDataResponse = MessageResponse
 
 
-# =========================
-# 2. NORMALIZATION
-# =========================
+# ==========================================================
+# 2. NORMALIZE DATA (Data Controller)
+# Endpoint: /normalize_data
+# ==========================================================
 class NormalizationOptions(BaseModel):
     clean_spaces: bool = True
     remove_html: bool = True
@@ -40,45 +37,100 @@ class NormalizationOptions(BaseModel):
     statistical_profiling: bool = True
 
 
-class NormalizationRequest(BaseModel):
+class NormalizeDataRequest(BaseModel):
     text: str
     options: Optional[NormalizationOptions] = None
 
 
-# Alias para response_model del endpoint /Normalization
-NormalizationResponse = MessageResponse
+NormalizeDataResponse = MessageResponse
 
 
-# =========================
-# 3. ANONYMIZATION
-# =========================
-class AnonymizationRequest(BaseModel):
+# ==========================================================
+# 3. ANONYMIZE DATA (Data Processor)
+# Endpoint: /anonimize_data
+# ==========================================================
+class AnonymizeDataRequest(BaseModel):
     text: str
-    anonymization_technique: str = "masking"
+    anonymization_technique: Literal[
+        "masking",
+        "redaction",
+        "pseudonymization",
+        "tokenization"
+    ] = "masking"
 
 
-# Alias para response_model del endpoint /Anonimization
-AnonymizationResponse = MessageResponse
+AnonymizeDataResponse = MessageResponse
 
 
-# =========================
-# 4. LOGS
-# =========================
-# Si el endpoint /logs devuelve:
-# {"message": "Funcionalidad de logs en desarrollo"}
-# entonces también debe usar MessageResponse.
-LogSchema = MessageResponse
+# ==========================================================
+# 4. REQUEST DATA (External Party / Receiver)
+# Endpoint: /request_data
+# ==========================================================
+class RequestDataRequest(BaseModel):
+    requester_name: str
+    organization: str
+    purpose: str
+    legal_basis: str
+    requested_data_description: str
 
 
-# =========================
-# 5. REGISTER USER
-# =========================
-class RegisterUserRequest(BaseModel):
+RequestDataResponse = MessageResponse
+
+
+# ==========================================================
+# 5. CHECKING LOGS (Control Authority)
+# Endpoint: /checking_logs
+# ==========================================================
+class CheckingLogsRequest(BaseModel):
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    process_type: Optional[str] = None
+
+
+CheckingLogsResponse = MessageResponse
+
+
+# ==========================================================
+# 6. LOGIN
+# Endpoint: /login
+# ==========================================================
+class LoginRequest(BaseModel):
+    user: str
+    password: str
+
+
+LoginResponse = MessageResponse
+
+
+# ==========================================================
+# 7. SIGN IN / REGISTER USER
+# Endpoint: /sign_in
+# Rol por defecto: data_owner
+# ==========================================================
+class SignInRequest(BaseModel):
     username: str
     email: EmailStr
     password: str
     full_name: Optional[str] = None
 
 
-# Alias para response_model del endpoint /register
-RegisterUserResponse = MessageResponse
+SignInResponse = MessageResponse
+
+
+# ==========================================================
+# 8. MODIFY ATTRIBUTES (Admin)
+# Endpoint: /modify_attributes
+# ==========================================================
+class ModifyAttributesRequest(BaseModel):
+    username: str
+    new_role: Literal[
+        "admin",
+        "data_owner",
+        "data_controller",
+        "data_processor",
+        "external_party",
+        "control_authority"
+    ]
+
+
+ModifyAttributesResponse = MessageResponse
