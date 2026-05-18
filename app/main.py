@@ -1,28 +1,27 @@
+# ==========================================================
+# main.py
+# Arquitectura RESTful preliminar (todos los endpoints
+# retornan únicamente {"message": "Endpoint en desarrollo"})
+# ==========================================================
+
 from fastapi import FastAPI
 
 from app.schemas import (
-    InsertDataRequest,
-    InsertDataResponse,
-    NormalizeDataRequest,
-    NormalizeDataResponse,
-    AnonymizeDataRequest,
-    AnonymizeDataResponse,
-    RequestDataRequest,
-    RequestDataResponse,
-    CheckingLogsRequest,
-    CheckingLogsResponse,
+    MessageResponse,
+    DocumentCreateRequest,
+    DocumentNormalizationRequest,
+    DocumentAnonymizationRequest,
+    AccessRequestCreateRequest,
+    AuditLogQueryRequest,
     LoginRequest,
-    LoginResponse,
-    SignInRequest,
-    SignInResponse,
-    ModifyAttributesRequest,
-    ModifyAttributesResponse,
+    RegisterRequest,
+    UserRoleUpdateRequest,
 )
 
 app = FastAPI(
     title="Text Processing API",
-    version="2.0.0",
-    description="API para ingesta, normalización, anonimización, solicitud de datos, auditoría y gestión de usuarios."
+    version="3.0.0",
+    description="API RESTful para procesamiento de datos no estructurados y cumplimiento de la LOPDP."
 )
 
 
@@ -32,87 +31,83 @@ app = FastAPI(
 @app.get("/")
 def root():
     return {
-        "message": "Bienvenido a la API de Procesamiento de Datos No Estructurados",
+        "message": "Bienvenido a la API RESTful de Procesamiento de Datos No Estructurados",
         "docs": "/docs",
         "redoc": "/redoc"
     }
 
 
 # ==========================================================
-# 1. INSERT DATA (Data Owner)
+# AUTHENTICATION
 # ==========================================================
-@app.post("/insert_data", response_model=InsertDataResponse)
-def insert_data(data: InsertDataRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
-
-
-# ==========================================================
-# 2. NORMALIZE DATA (Data Controller)
-# ==========================================================
-@app.post("/normalize_data", response_model=NormalizeDataResponse)
-def normalize_data(data: NormalizeDataRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
-
-
-# ==========================================================
-# 3. ANONYMIZE DATA (Data Processor)
-# ==========================================================
-@app.post("/anonimize_data", response_model=AnonymizeDataResponse)
-def anonimize_data(data: AnonymizeDataRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
-
-
-# ==========================================================
-# 4. REQUEST DATA (External Party / Receiver)
-# ==========================================================
-@app.post("/request_data", response_model=RequestDataResponse)
-def request_data(data: RequestDataRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
-
-
-# ==========================================================
-# 5. CHECKING LOGS (Control Authority)
-# ==========================================================
-@app.post("/checking_logs", response_model=CheckingLogsResponse)
-def checking_logs(data: CheckingLogsRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
-
-
-# ==========================================================
-# 6. LOGIN
-# ==========================================================
-@app.post("/login", response_model=LoginResponse)
+@app.post("/api/v1/auth/login", response_model=MessageResponse)
 def login(data: LoginRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
+    return {"message": "Endpoint en desarrollo"}
+
+
+@app.post("/api/v1/auth/register", response_model=MessageResponse)
+def register(data: RegisterRequest):
+    return {"message": "Endpoint en desarrollo"}
 
 
 # ==========================================================
-# 7. SIGN IN / REGISTER USER
+# DOCUMENTS
+# Data Owner crea un documento con consentimiento
 # ==========================================================
-@app.post("/sign_in", response_model=SignInResponse)
-def sign_in(data: SignInRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
+@app.post("/api/v1/documents", response_model=MessageResponse)
+def create_document(data: DocumentCreateRequest):
+    return {"message": "Endpoint en desarrollo"}
 
 
 # ==========================================================
-# 8. MODIFY ATTRIBUTES (Admin)
+# NORMALIZATIONS
+# Data Controller procesa un documento existente
 # ==========================================================
-@app.post("/modify_attributes", response_model=ModifyAttributesResponse)
-def modify_attributes(data: ModifyAttributesRequest):
-    return {
-        "message": "Endpoint en desarrollo"
-    }
+@app.post(
+    "/api/v1/documents/{document_id}/normalizations",
+    response_model=MessageResponse
+)
+def normalize_document(document_id: int, data: DocumentNormalizationRequest):
+    return {"message": "Endpoint en desarrollo"}
+
+
+# ==========================================================
+# ANONYMIZATIONS
+# Data Processor anonimiza un documento existente
+# ==========================================================
+@app.post(
+    "/api/v1/documents/{document_id}/anonymizations",
+    response_model=MessageResponse
+)
+def anonymize_document(document_id: int, data: DocumentAnonymizationRequest):
+    return {"message": "Endpoint en desarrollo"}
+
+
+# ==========================================================
+# ACCESS REQUESTS
+# External Party solicita acceso a datos
+# ==========================================================
+@app.post("/api/v1/access-requests", response_model=MessageResponse)
+def create_access_request(data: AccessRequestCreateRequest):
+    return {"message": "Endpoint en desarrollo"}
+
+
+# ==========================================================
+# AUDIT LOGS
+# Control Authority consulta registros
+# ==========================================================
+@app.get("/api/v1/audit-logs", response_model=MessageResponse)
+def get_audit_logs():
+    return {"message": "Endpoint en desarrollo"}
+
+
+# ==========================================================
+# USERS / ROLES
+# Admin modifica roles de usuario
+# ==========================================================
+@app.patch(
+    "/api/v1/users/{user_id}/roles",
+    response_model=MessageResponse
+)
+def update_user_role(user_id: int, data: UserRoleUpdateRequest):
+    return {"message": "Endpoint en desarrollo"}

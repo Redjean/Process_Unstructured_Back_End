@@ -1,3 +1,7 @@
+# ==========================================================
+# schemas.py
+# ==========================================================
+
 from typing import Optional, Literal
 from pydantic import BaseModel, EmailStr
 
@@ -10,20 +14,35 @@ class MessageResponse(BaseModel):
 
 
 # ==========================================================
-# 1. INSERT DATA (Data Owner)
-# Endpoint: /insert_data
+# AUTHENTICATION
 # ==========================================================
-class InsertDataRequest(BaseModel):
-    text: str
-    consent_accepted: bool
+class LoginRequest(BaseModel):
+    user: str
+    password: str
 
 
-InsertDataResponse = MessageResponse
+class RegisterRequest(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    full_name: Optional[str] = None
 
 
 # ==========================================================
-# 2. NORMALIZE DATA (Data Controller)
-# Endpoint: /normalize_data
+# DOCUMENTS
+# ==========================================================
+class ComplianceInfo(BaseModel):
+    lodpd_consent_granted: bool
+    consent_version: str = "v1.0"
+
+
+class DocumentCreateRequest(BaseModel):
+    raw_text: str
+    compliance: ComplianceInfo
+
+
+# ==========================================================
+# NORMALIZATIONS
 # ==========================================================
 class NormalizationOptions(BaseModel):
     clean_spaces: bool = True
@@ -37,20 +56,14 @@ class NormalizationOptions(BaseModel):
     statistical_profiling: bool = True
 
 
-class NormalizeDataRequest(BaseModel):
-    text: str
+class DocumentNormalizationRequest(BaseModel):
     options: Optional[NormalizationOptions] = None
 
 
-NormalizeDataResponse = MessageResponse
-
-
 # ==========================================================
-# 3. ANONYMIZE DATA (Data Processor)
-# Endpoint: /anonimize_data
+# ANONYMIZATIONS
 # ==========================================================
-class AnonymizeDataRequest(BaseModel):
-    text: str
+class DocumentAnonymizationRequest(BaseModel):
     anonymization_technique: Literal[
         "masking",
         "redaction",
@@ -59,14 +72,10 @@ class AnonymizeDataRequest(BaseModel):
     ] = "masking"
 
 
-AnonymizeDataResponse = MessageResponse
-
-
 # ==========================================================
-# 4. REQUEST DATA (External Party / Receiver)
-# Endpoint: /request_data
+# ACCESS REQUESTS
 # ==========================================================
-class RequestDataRequest(BaseModel):
+class AccessRequestCreateRequest(BaseModel):
     requester_name: str
     organization: str
     purpose: str
@@ -74,55 +83,20 @@ class RequestDataRequest(BaseModel):
     requested_data_description: str
 
 
-RequestDataResponse = MessageResponse
-
-
 # ==========================================================
-# 5. CHECKING LOGS (Control Authority)
-# Endpoint: /checking_logs
+# AUDIT LOGS
+# (GET sin body, por ahora no requiere schema)
 # ==========================================================
-class CheckingLogsRequest(BaseModel):
+class AuditLogQueryRequest(BaseModel):
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     process_type: Optional[str] = None
 
 
-CheckingLogsResponse = MessageResponse
-
-
 # ==========================================================
-# 6. LOGIN
-# Endpoint: /login
+# USER ROLE UPDATE
 # ==========================================================
-class LoginRequest(BaseModel):
-    user: str
-    password: str
-
-
-LoginResponse = MessageResponse
-
-
-# ==========================================================
-# 7. SIGN IN / REGISTER USER
-# Endpoint: /sign_in
-# Rol por defecto: data_owner
-# ==========================================================
-class SignInRequest(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
-    full_name: Optional[str] = None
-
-
-SignInResponse = MessageResponse
-
-
-# ==========================================================
-# 8. MODIFY ATTRIBUTES (Admin)
-# Endpoint: /modify_attributes
-# ==========================================================
-class ModifyAttributesRequest(BaseModel):
-    username: str
+class UserRoleUpdateRequest(BaseModel):
     new_role: Literal[
         "admin",
         "data_owner",
@@ -131,6 +105,3 @@ class ModifyAttributesRequest(BaseModel):
         "external_party",
         "control_authority"
     ]
-
-
-ModifyAttributesResponse = MessageResponse
